@@ -66,6 +66,7 @@ async function run() {
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
         const productsCollection = client.db('productHouse').collection('products')
+        const userCollection = client.db('productHouse').collection('users')
 
 
         //Getting all products from mongodb
@@ -94,6 +95,19 @@ async function run() {
         })
 
 
+
+        //User releted api
+        //Post user to mongodb
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const query = { email: user.email };
+            const existingUser = await userCollection.findOne(query);
+            if (existingUser) {
+                return res.send({ message: "User already exist!", insertedId: null });
+            }
+            const result = await userCollection.insertOne(user);
+            res.send(result);
+        })
 
 
     } finally {

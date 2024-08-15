@@ -46,7 +46,7 @@ const verifyToken = (req, res, next) => {
 
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://<username>:<password>@cluster0.1qcsvas.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.1qcsvas.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -64,6 +64,35 @@ async function run() {
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
+
+        const productsCollection = client.db('productHouse').collection('products')
+
+
+        //Getting all products from mongodb
+
+        //Pagination releted api
+        // app.get('/products', async (req, res) => {
+        //     const page = parseInt(req.query.page);
+        //     const size = parseInt(req.query.size);
+        //     console.log("Pagination query", req.query);
+        //     const result = await productsCollection.find()
+        //         .skip(page * size) //skip means data to be skiped till the res
+        //         .limit(size) // limit is use for to show qty of size
+        //         .toArray();
+        //     res.send(result);
+        // })
+        app.get('/products', async (req, res) => {
+            const result = await productsCollection.find().toArray();
+            res.send(result);
+        })
+
+
+        //getting total job count
+        app.get('/jobCount', async (req, res) => {
+            const count = await jobsCollection.estimatedDocumentCount();
+            res.send({ count });
+        })
+
 
 
 

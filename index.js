@@ -83,11 +83,13 @@ async function run() {
             res.send(result);
         })
 
-
-        // app.get('/products', async (req, res) => {
-        //     const result = await productsCollection.find().toArray();
-        //     res.send(result);
-        // })
+        // http://localhost:5000/products&search=
+        app.get('/products&search=:name', async (req, res) => {
+            const searchText = req.params.name;
+            const query = { name: searchText };
+            const result = await productsCollection.find(query).toArray();
+            res.send(result);
+        })
 
 
         //getting total job count

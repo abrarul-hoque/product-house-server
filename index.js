@@ -72,25 +72,27 @@ async function run() {
         //Getting all products from mongodb
 
         //Pagination releted api
-        // app.get('/products', async (req, res) => {
-        //     const page = parseInt(req.query.page);
-        //     const size = parseInt(req.query.size);
-        //     console.log("Pagination query", req.query);
-        //     const result = await productsCollection.find()
-        //         .skip(page * size) //skip means data to be skiped till the res
-        //         .limit(size) // limit is use for to show qty of size
-        //         .toArray();
-        //     res.send(result);
-        // })
         app.get('/products', async (req, res) => {
-            const result = await productsCollection.find().toArray();
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
+            console.log("Pagination query", req.query);
+            const result = await productsCollection.find()
+                .skip(page * size) //skip means data to be skiped till the res
+                .limit(size) // limit is use for to show qty of size
+                .toArray();
             res.send(result);
         })
 
 
+        // app.get('/products', async (req, res) => {
+        //     const result = await productsCollection.find().toArray();
+        //     res.send(result);
+        // })
+
+
         //getting total job count
-        app.get('/jobCount', async (req, res) => {
-            const count = await jobsCollection.estimatedDocumentCount();
+        app.get('/productCount', async (req, res) => {
+            const count = await productsCollection.estimatedDocumentCount();
             res.send({ count });
         })
 

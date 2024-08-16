@@ -72,16 +72,42 @@ async function run() {
         //Getting all products from mongodb
 
         //Pagination releted api
+        // app.get('/products', async (req, res) => {
+        //     const page = parseInt(req.query.page);
+        //     const size = parseInt(req.query.size);
+        //     console.log("Pagination query", req.query);
+        //     const result = await productsCollection.find()
+        //         .skip(page * size) //skip means data to be skiped till the res
+        //         .limit(size) // limit is use for to show qty of size
+        //         .toArray();
+        //     res.send(result);
+        // })
+
         app.get('/products', async (req, res) => {
             const page = parseInt(req.query.page);
             const size = parseInt(req.query.size);
+            const sortOrder = req.query.sortOrder;
+
             console.log("Pagination query", req.query);
+
+            let sortQuery = {};
+            if (sortOrder === "priceAsc") {
+                sortQuery = { price: 1 };
+            } else if (sortOrder === "priceDesc") {
+                sortQuery = { price: -1 };
+            } else if (sortOrder === "dateAsc") {
+                sortQuery = { createdOn: 1 };
+            } else if (sortOrder === "dateDesc") {
+                sortQuery = { createdOn: -1 };
+            }
             const result = await productsCollection.find()
+                .sort(sortQuery)
                 .skip(page * size) //skip means data to be skiped till the res
                 .limit(size) // limit is use for to show qty of size
                 .toArray();
             res.send(result);
         })
+
 
         // http://localhost:5000/products&search=
         app.get('/products&search=:name', async (req, res) => {
@@ -90,6 +116,9 @@ async function run() {
             const result = await productsCollection.find(query).toArray();
             res.send(result);
         })
+
+
+
 
 
         //getting total job count

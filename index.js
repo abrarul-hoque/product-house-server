@@ -50,11 +50,11 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    }
+    // serverApi: {
+    //     version: ServerApiVersion.v1,
+    //     strict: true,
+    //     deprecationErrors: true,
+    // }
 });
 
 async function run() {
@@ -69,9 +69,7 @@ async function run() {
         const userCollection = client.db('productHouse').collection('users')
 
 
-        //Getting all products from mongodb
-
-        //Pagination releted api
+        //Getting Data with Pagination
         // app.get('/products', async (req, res) => {
         //     const page = parseInt(req.query.page);
         //     const size = parseInt(req.query.size);
@@ -83,12 +81,62 @@ async function run() {
         //     res.send(result);
         // })
 
+
+        // Getting All data with pagination and sort option
+        // app.get('/products', async (req, res) => {
+        //     const page = parseInt(req.query.page);
+        //     const size = parseInt(req.query.size);
+        //     const sortOrder = req.query.sortOrder;
+
+        //     console.log("Pagination query", req.query);
+
+        //     let sortQuery = {};
+        //     if (sortOrder === "priceAsc") {
+        //         sortQuery = { price: 1 };
+        //     } else if (sortOrder === "priceDesc") {
+        //         sortQuery = { price: -1 };
+        //     } else if (sortOrder === "dateAsc") {
+        //         sortQuery = { createdOn: 1 };
+        //     } else if (sortOrder === "dateDesc") {
+        //         sortQuery = { createdOn: -1 };
+        //     }
+        //     const result = await productsCollection.find()
+        //         .sort(sortQuery)
+        //         .skip(page * size) //skip means data to be skiped till the res
+        //         .limit(size) // limit is use for to show qty of size
+        //         .toArray();
+        //     res.send(result);
+        // })
+
+
+
+
+
+
+        //getting data with pagination, sortting, and filtering
         app.get('/products', async (req, res) => {
             const page = parseInt(req.query.page);
             const size = parseInt(req.query.size);
             const sortOrder = req.query.sortOrder;
 
+            const brand = req.query.brand;
+            const category = req.query.category;
+            const priceRange = req.query.priceRange;
+
+            let filterQuery = {};
+            if (brand) {
+                filterQuery.brandName = brand;
+            }
+            if (category) {
+                filterQuery.category = category;
+            }
+            if (priceRange) {
+                const [min, max] = priceRange.split('-').map(Number);
+                filterQuery.price = { $gte: min, $lte: max };
+            }
+
             console.log("Pagination query", req.query);
+
 
             let sortQuery = {};
             if (sortOrder === "priceAsc") {
@@ -100,7 +148,7 @@ async function run() {
             } else if (sortOrder === "dateDesc") {
                 sortQuery = { createdOn: -1 };
             }
-            const result = await productsCollection.find()
+            const result = await productsCollection.find(filterQuery)
                 .sort(sortQuery)
                 .skip(page * size) //skip means data to be skiped till the res
                 .limit(size) // limit is use for to show qty of size
@@ -108,6 +156,20 @@ async function run() {
             res.send(result);
         })
 
+
+
+
+        app.get('/products/brands', async (req, res) => {
+            const brands = await productsCollection.distinct("brandName");
+            console.log(brands);
+            res.send(brands);
+        })
+
+        app.get('/products/categories', async (req, res) => {
+            const categories = await productsCollection.distinct('category');
+            res.send(categories)
+
+        })
 
         // http://localhost:5000/products&search=
         app.get('/products&search=:name', async (req, res) => {

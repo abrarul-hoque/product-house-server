@@ -60,9 +60,9 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
         const productsCollection = client.db('productHouse').collection('products')
@@ -119,10 +119,19 @@ async function run() {
             const size = parseInt(req.query.size);
             const sortOrder = req.query.sortOrder;
 
-            const brand = req.query.brand;
-            const category = req.query.category;
-            const priceRange = req.query.priceRange;
+            const brand = req.query.brand || "";
+            const category = req.query.category || "";
+            const priceRange = req.query.priceRange || "";
 
+            let [min, max] = priceRange.split('-').map(Number);
+
+            // const minPrice = min || 0;
+            // const maxPrice = max || Number.MAX_SAFE_INTEGER;
+
+            const minPrice = min !== undefined && !isNaN(min) ? min : 0;
+            const maxPrice = max !== undefined && !isNaN(max) ? max : Number.MAX_SAFE_INTEGER;
+
+            console.log(priceRange);
             let filterQuery = {};
             if (brand) {
                 filterQuery.brandName = brand;
@@ -131,8 +140,7 @@ async function run() {
                 filterQuery.category = category;
             }
             if (priceRange) {
-                const [min, max] = priceRange.split('-').map(Number);
-                filterQuery.price = { $gte: min, $lte: max };
+                filterQuery.price = { $gte: minPrice, $lte: maxPrice };
             }
 
             console.log("Pagination query", req.query);
@@ -172,9 +180,9 @@ async function run() {
         })
 
         // http://localhost:5000/products&search=
-        app.get('/products&search=:name', async (req, res) => {
+        app.get('/products/search/:name', async (req, res) => {
             const searchText = req.params.name;
-            const query = { name: searchText };
+            const query = { name: { $regex: searchText, $options: 'i' } };
             const result = await productsCollection.find(query).toArray();
             res.send(result);
         })

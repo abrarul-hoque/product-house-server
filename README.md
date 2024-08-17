@@ -30,6 +30,9 @@ This is the backend of the Product House project, providing API endpoints for pr
 - nodemon
 - git
 
+
+## Running the Project Locally
+
 ### Installation
 1. Clone the repository:
 ```
@@ -47,8 +50,7 @@ cd product-house-server
 npm install
 ```
 
-## Running the Project Locally
-1. Set up the environment variables in a .env file:
+4. Set up the environment variables in a .env file:
 
 
 ```
@@ -56,12 +58,12 @@ DB_USER=<mongodb_userName>
 DB_PASS=<mongodb_password>
 ```
 
-2. Run the Server:
+5. Run the Server:
 ```
 nodemon index.js
 ```
 
-3. Open your browser and go to http://localhost:5000 to view the application.
+6. Open your browser and go to http://localhost:5000 to view the application.
 
 
 ## API Endpoints

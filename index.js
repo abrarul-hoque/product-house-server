@@ -12,7 +12,7 @@ app.use(
             "http://localhost:5000",
             "https://product-house-825b4.firebaseapp.com",
             "https://product-house-825b4.app",
-            "https://product-house.netlify.app",
+            "https://product-house-abrar.netlify.app",
         ]
     })
 );
@@ -69,48 +69,6 @@ async function run() {
         const userCollection = client.db('productHouse').collection('users')
 
 
-        //Getting Data with Pagination
-        // app.get('/products', async (req, res) => {
-        //     const page = parseInt(req.query.page);
-        //     const size = parseInt(req.query.size);
-        //     console.log("Pagination query", req.query);
-        //     const result = await productsCollection.find()
-        //         .skip(page * size) //skip means data to be skiped till the res
-        //         .limit(size) // limit is use for to show qty of size
-        //         .toArray();
-        //     res.send(result);
-        // })
-
-
-        // Getting All data with pagination and sort option
-        // app.get('/products', async (req, res) => {
-        //     const page = parseInt(req.query.page);
-        //     const size = parseInt(req.query.size);
-        //     const sortOrder = req.query.sortOrder;
-
-        //     console.log("Pagination query", req.query);
-
-        //     let sortQuery = {};
-        //     if (sortOrder === "priceAsc") {
-        //         sortQuery = { price: 1 };
-        //     } else if (sortOrder === "priceDesc") {
-        //         sortQuery = { price: -1 };
-        //     } else if (sortOrder === "dateAsc") {
-        //         sortQuery = { createdOn: 1 };
-        //     } else if (sortOrder === "dateDesc") {
-        //         sortQuery = { createdOn: -1 };
-        //     }
-        //     const result = await productsCollection.find()
-        //         .sort(sortQuery)
-        //         .skip(page * size) //skip means data to be skiped till the res
-        //         .limit(size) // limit is use for to show qty of size
-        //         .toArray();
-        //     res.send(result);
-        // })
-
-
-
-
 
 
         //getting data with pagination, sortting, and filtering
@@ -125,8 +83,7 @@ async function run() {
 
             let [min, max] = priceRange.split('-').map(Number);
 
-            // const minPrice = min || 0;
-            // const maxPrice = max || Number.MAX_SAFE_INTEGER;
+
 
             const minPrice = min !== undefined && !isNaN(min) ? min : 0;
             const maxPrice = max !== undefined && !isNaN(max) ? max : Number.MAX_SAFE_INTEGER;
